@@ -1,3 +1,93 @@
+// The players
+const Player = (name, shape) => {
+  const _playerName = name;
+  const _playerShape = shape;
+
+  const getName = () => _playerName;
+  const getShape = () => _playerShape;
+  const setName = (nouveauNom) => {
+    _playerName = nouveauNom;  
+  }
+  const setShape = (nouveauSign) => {
+    _playerShape = nouveauSign;
+  }
+  return ({ getName, getShape, setName, setShape  });
+};
+
+// The game
+const Partie = (() => {
+  const _player1 = Player('Julien', "X");
+  const _player2 = Player('Manon', "O");
+  let _prochainJoueur = 'player1';
+
+  const aQuiLeTour = () => {
+    return(_prochainJoueur);
+  }
+
+  const _prochainTour = () => {
+    if(_prochainJoueur == 'player1'){
+      _prochainJoueur = 'player2';
+    }
+    else{
+      _prochainJoueur = 'player1';
+    }
+  }
+
+  const _verifVictoire = () => {
+    
+  }
+
+  const _verifTie = () => {
+    
+  }
+
+  const _win = (player) => {
+    
+  }
+
+  const _tie = () => {
+    
+  }
+
+  const tourPlayer1 = (zone) => {
+    let notFilled = Game.markZone(zone, _player1.getShape());
+    if(notFilled){
+      Game.render();
+      _prochainTour();
+      let win = _verifVictoire();
+      if (win){
+        _win(_player1);
+      }
+      else{
+        let tie = _verifTie();
+        if(tie){
+          _tie();
+        }
+      }
+    }
+  }
+
+  const tourPlayer2 = (zone) => {
+    let notFilled = Game.markZone(zone, _player2.getShape());
+    if(notFilled){
+      Game.render();
+      _prochainTour();
+      let win = _verifVictoire();
+      if (win){
+        _win(_player2);
+      }
+      else{
+        let tie = _verifTie();
+        if(tie){
+          _tie();
+        }
+      }
+    }
+  }
+  return{tourPlayer1, tourPlayer2, aQuiLeTour}
+
+})();
+
 // The Gameboard
 const Game = (() => {
   let _board = new Array(3);
@@ -21,7 +111,7 @@ const Game = (() => {
         zone.id = i*3+j;
         zone.classList.add("zone");
         zone.addEventListener('click',function(e){
-          if(Partie.aQuiLeTour == 'player1'){
+          if(Partie.aQuiLeTour() === 'player1'){
             Partie.tourPlayer1(this.id);
           }
           else{
@@ -49,87 +139,6 @@ const Game = (() => {
   }
 
   return { render, getZone, markZone };
-})();
-
-// The players
-const Player = (name, shape) => {
-  const _playerName = name;
-  const _playerShape = shape;
-
-  const getName = () => _playerName;
-  const getShape = () => _playerShape;
-  const setName = (nouveauNom) => {
-    _playerName = nouveauNom;  
-  }
-  const setShape = (nouveauSign) => {
-    _playerShape = nouveauSign;
-  }
-  return ({ getName, getShape, setName, setShape  });
-};
-
-// The game
-const Partie = (() => {
-  const _player1 = Player('Julien', "X");
-  const _player2 = Player('Manon', "O");
-  const _prochainJoueur = 'player1';
-
-  const aQuiLeTour = () => {
-    return(_prochainJoueur);
-  }
-
-  const _verifVictoire = () => {
-    
-  }
-
-  const _verifTie = () => {
-    
-  }
-
-  const _win = (player) => {
-    
-  }
-
-  const _tie = () => {
-    
-  }
-
-  const tourPlayer1 = (zone) => {
-    let notFilled = Game.markZone(zone, _player1.getShape());
-    if(notFilled){
-      Game.render();
-      Partie.aQuiLeTour='player2';
-      let win = _verifVictoire();
-      if (win){
-        _win(_player1);
-      }
-      else{
-        let tie = _verifTie();
-        if(tie){
-          _tie();
-        }
-      }
-    }
-  }
-
-  const tourPlayer2 = (zone) => {
-    let notFilled = Game.markZone(zone, _player2.getShape());
-    if(notFilled){
-      Game.render();
-      Partie.aQuiLeTour='player1';
-      let win = _verifVictoire();
-      if (win){
-        _win(_player2);
-      }
-      else{
-        let tie = _verifTie();
-        if(tie){
-          _tie();
-        }
-      }
-    }
-  }
-  return{tourPlayer1, tourPlayer2, aQuiLeTour}
-
 })();
 
 // FOR TESTING PURPOSE
