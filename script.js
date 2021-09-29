@@ -18,6 +18,16 @@ const Game = (() => {
       for(let j=0; j<3; j++){
         let zone = document.createElement('button');
         zone.textContent = _board[i][j];
+        zone.id = i*3+j;
+        zone.classList.add("zone");
+        zone.addEventListener('click',function(e){
+          if(Partie.aQuiLeTour == 'player1'){
+            Partie.tourPlayer1(this.id);
+          }
+          else{
+            Partie.tourPlayer2(this.id);
+          }
+        })
         _col.appendChild(zone);
       }
       _wrapper.appendChild(_col);
@@ -31,6 +41,10 @@ const Game = (() => {
   const markZone = (position, shape) => {
     if(!getZone(position)){
       _board[Math.trunc(position/3)][position%3] = shape;
+      return(1);
+    }
+    else{
+      return(0);
     }
   }
 
@@ -39,20 +53,84 @@ const Game = (() => {
 
 // The players
 const Player = (name, shape) => {
-  const getName = () => name;
-  const getShape = () => shape;
-  return ({ getName, getShape });
-};
+  const _playerName = name;
+  const _playerShape = shape;
 
-const player1 = Player('Ju','X');
-const player2 = Player('Manon','O');
+  const getName = () => _playerName;
+  const getShape = () => _playerShape;
+  const setName = (nouveauNom) => {
+    _playerName = nouveauNom;  
+  }
+  const setShape = (nouveauSign) => {
+    _playerShape = nouveauSign;
+  }
+  return ({ getName, getShape, setName, setShape  });
+};
 
 // The game
 const Partie = (() => {
-  const _quelJoueur = 1;
+  const _player1 = Player('Julien', "X");
+  const _player2 = Player('Manon', "O");
+  const _prochainJoueur = 'player1';
+
+  const aQuiLeTour = () => {
+    return(_prochainJoueur);
+  }
+
+  const _verifVictoire = () => {
+    
+  }
+
+  const _verifTie = () => {
+    
+  }
+
+  const _win = (player) => {
+    
+  }
+
+  const _tie = () => {
+    
+  }
+
+  const tourPlayer1 = (zone) => {
+    let notFilled = Game.markZone(zone, _player1.getShape());
+    if(notFilled){
+      Game.render();
+      Partie.aQuiLeTour='player2';
+      let win = _verifVictoire();
+      if (win){
+        _win(_player1);
+      }
+      else{
+        let tie = _verifTie();
+        if(tie){
+          _tie();
+        }
+      }
+    }
+  }
+
+  const tourPlayer2 = (zone) => {
+    let notFilled = Game.markZone(zone, _player2.getShape());
+    if(notFilled){
+      Game.render();
+      Partie.aQuiLeTour='player1';
+      let win = _verifVictoire();
+      if (win){
+        _win(_player2);
+      }
+      else{
+        let tie = _verifTie();
+        if(tie){
+          _tie();
+        }
+      }
+    }
+  }
+  return{tourPlayer1, tourPlayer2, aQuiLeTour}
+
 })();
 
-
-
 // FOR TESTING PURPOSE
-
+Game.render();
