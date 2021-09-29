@@ -43,7 +43,8 @@ const Partie = (() => {
   }
 
   const _win = (player) => {
-    console.log("it's a win!");
+    const divResult = document.querySelector('.result');
+    divResult.textContent = `${player} a gagné !`;
   }
 
   const _tie = () => {
@@ -57,7 +58,7 @@ const Partie = (() => {
       _prochainTour();
       let win = Game.verifVictoire(_player1.getShape());
       if (win){
-        _win(_player1);
+        _win(_player1.getName());
       }
       else{
         let tie = Game.verifTie();
@@ -75,7 +76,7 @@ const Partie = (() => {
       _prochainTour();
       let win = Game.verifVictoire(_player2.getShape());
       if (win){
-        _win(_player2);
+        _win(_player2.getName());
       }
       else{
         let tie = Game.verifTie();
@@ -106,6 +107,7 @@ const Game = (() => {
     }
     for(let i=0; i<3 ; i++){
       let _col = document.createElement('div');
+      _col.classList.add("row");
       for(let j=0; j<3; j++){
         let zone = document.createElement('button');
         zone.textContent = _board[i][j];
