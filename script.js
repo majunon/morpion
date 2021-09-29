@@ -27,6 +27,7 @@ const Player = (name, shape) => {
 const Partie = (() => {
   const _player1 = Player('', '');
   const _player2 = Player('', '');
+  let _gameEnd = 0;
   let _prochainJoueur = 'player1';
 
   const restart = document.querySelector('#restart');
@@ -83,20 +84,23 @@ const Partie = (() => {
   const _win = (player) => {
     divResult.textContent = `${player} a gagné !`;
     showRestart();
+    _gameEnd=1;
   }
 
   const _tie = () => {
     divResult.textContent = `Match nul !`;
     showRestart();
+    _gameEnd=1;
   }
 
   const clearResult = () => {
     divResult.textContent = "";
+    _gameEnd=0;
   }
 
   const tourPlayer1 = (zone) => {
     let notFilled = Game.markZone(zone, _player1.getShape());
-    if (notFilled) {
+    if (notFilled && !_gameEnd) {
       Game.render();
       _prochainTour();
       let win = Game.verifVictoire(_player1.getShape());
@@ -114,7 +118,7 @@ const Partie = (() => {
 
   const tourPlayer2 = (zone) => {
     let notFilled = Game.markZone(zone, _player2.getShape());
-    if (notFilled) {
+    if (notFilled && !_gameEnd) {
       Game.render();
       _prochainTour();
       let win = Game.verifVictoire(_player2.getShape());
