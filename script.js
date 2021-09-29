@@ -1,3 +1,12 @@
+// Used to test if an array is really made of a single value.
+Array.prototype.trueEvery= function (pred) {
+  for (var i = 0; i < this.length; i++) {
+      if (!pred(this[i])) return false;
+  }
+
+  return true;
+}
+
 // The players
 const Player = (name, shape) => {
   const _playerName = name;
@@ -33,20 +42,12 @@ const Partie = (() => {
     }
   }
 
-  const _verifVictoire = () => {
-    
-  }
-
-  const _verifTie = () => {
-    
-  }
-
   const _win = (player) => {
-    
+    console.log("it's a win!");
   }
 
   const _tie = () => {
-    
+    console.log("it's a tie!");
   }
 
   const tourPlayer1 = (zone) => {
@@ -54,12 +55,12 @@ const Partie = (() => {
     if(notFilled){
       Game.render();
       _prochainTour();
-      let win = _verifVictoire();
+      let win = Game.verifVictoire(_player1.getShape());
       if (win){
         _win(_player1);
       }
       else{
-        let tie = _verifTie();
+        let tie = Game.verifTie();
         if(tie){
           _tie();
         }
@@ -72,12 +73,12 @@ const Partie = (() => {
     if(notFilled){
       Game.render();
       _prochainTour();
-      let win = _verifVictoire();
+      let win = Game.verifVictoire(_player2.getShape());
       if (win){
         _win(_player2);
       }
       else{
-        let tie = _verifTie();
+        let tie = Game.verifTie();
         if(tie){
           _tie();
         }
@@ -138,7 +139,32 @@ const Game = (() => {
     }
   }
 
-  return { render, getZone, markZone };
+  const verifVictoire = (shape) => {
+    for(let i=0;i<3;i++){
+      //Verif horizontals
+      if(_board[i].trueEvery(sign => sign == shape)){
+        return(1);
+      }
+      //Verif verticals
+      if(_board.map(zone => zone[i]).trueEvery(sign => sign == shape)){
+        return(1);
+      }
+    }
+    return(0);
+  }
+
+  const verifTie = () => {
+    for(let i=0; i<3; i++){
+      for(let j=0; j<3; j++){
+        if(_board[i][j]===undefined){
+          return(0);
+        }
+      }
+    }    
+    return(1);
+  }
+
+  return { _board,render, getZone, markZone, verifTie, verifVictoire };
 })();
 
 // FOR TESTING PURPOSE
