@@ -48,7 +48,8 @@ const Partie = (() => {
   }
 
   const _tie = () => {
-    console.log("it's a tie!");
+    const divResult = document.querySelector('.result');
+    divResult.textContent = `Match nul !`;
   }
 
   const tourPlayer1 = (zone) => {
@@ -152,7 +153,16 @@ const Game = (() => {
         return(1);
       }
     }
-    return(0);
+    //Verif diagonale 1
+    if(_board[1][1]!==undefined){
+      let tmp = (_board[0][0]===_board[1][1])+(_board[2][2]===_board[1][1]);
+      if(tmp == 2){return(1);}
+      tmp = (_board[0][2]===_board[1][1])+(_board[2][0]===_board[1][1]);
+      if(tmp == 2){return(1);}
+    }
+    else{
+      return(0);
+    }
   }
 
   const verifTie = () => {
