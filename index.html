@@ -9,8 +9,28 @@
   <script rel="javascript" src="script.js" defer></script>
 </head>
 <body>
-  <h1>Morpion !</h1>
+  <h1>Morpion</h1>
+  <form class="playerSelection">
+    <label>Player1's name</label>
+    <div>
+      <input type="text" id="player1Name">
+    </div>
+    <div class="signPlayer">
+      <input type="radio" id="player1X" name="signPlayer1" value="X" checked>
+      <label for="X">X</label>
+      <input type="radio" id="player1O" name="signPlayer1" value="0">
+      <label for="O">O</label>
+    </div>
+    <label>Player2's name</label>
+    <div>
+      <input type="text" id="player2Name">
+    </div>
+    <div>
+      <input type="button" id="validateSelection" value="VALIDATE">
+    </div>
+  </form>
   <div id="wrapper"></div>
   <div class="result"></div>
+  <button id="restart">RESTART</button>
 </body>
 </html>
