@@ -85,12 +85,14 @@ const Partie = (() => {
     divResult.textContent = `${player} a gagné !`;
     showRestart();
     _gameEnd=1;
+    _prochainJoueur='player1';
   }
 
   const _tie = () => {
     divResult.textContent = `Match nul !`;
     showRestart();
     _gameEnd=1;
+    _prochainJoueur='player1';
   }
 
   const clearResult = () => {
