@@ -38,128 +38,181 @@ const Partie = (() => {
   const _player1 = Player('', '', 'Human'); //Player1 always human
   const _player2 = Player('', '', ''); //Player2 can be CPU
   let _gameEnd = 0; //To stop the game after the end
-  let _prochainJoueur = 'player1'; //To determine which player will make the next move
+  let _prochainJoueur; //To determine which player will make the next move
 
   const restart = document.querySelector('#restart'); //Restart button
   const divResult = document.querySelector('.result'); //The result display
 
   // Handle the form at the beggining of the game
-
-  const typePlayer2 = document.querySelector('#player2Human');
-  const signPlayer1 = document.querySelector('#player1X');
+  //---------------------------------------------
+  // These 3 to handle the GUI
   const form = document.querySelector('.playerSelection');
   const board = document.querySelector('#wrapper');
   const validatePlayerSelection = document.querySelector('#validateSelection');
-  validatePlayerSelection.addEventListener('click', () => {
+
+  function handleForm() {
+    // This one to get player2 type
+    const typePlayer2 = document.querySelector('#player2Human');
+    // This one to get the sign of player1
+    const signPlayer1 = document.querySelector('#player1X');
+    // These 2 to get the player's names
     const player1name = document.querySelector('#player1Name');
     const player2name = document.querySelector('#player2Name');
-
+    // Set the names of players
     _player1.setName(player1name.value || 'Player1');
     _player2.setName(player2name.value || 'Player2');
+    // Set the signs of player. This will also determine who plays first.
     if (signPlayer1.checked) {
       _player1.setShape('X');
       _player2.setShape('O');
+      _prochainJoueur = 'player1';
     }
     else {
       _player1.setShape('O');
       _player2.setShape('X');
       _prochainJoueur = 'player2';
     }
+    // Set the type for player2
     if (typePlayer2.checked) {
       _player2.setType('Human');
     }
     else {
       _player2.setType('CPU');
     }
+    if (_prochainJoueur == 'player2' && _player2.getType() == 'CPU') {
+      handleTurn(0);
+    }
+    // Make the form disapear and display the board instead.
     form.style.display = "none";
     board.style.display = "block";
-    divResult.textContent = `Au tour de ${_player1.getName()}`
+    // Display a message to tell which player needs to play.
+    divResult.textContent = `Au tour de ${_prochainJoueur}`;
+  }
+
+  // When the validate button is clicked, handle the form data
+  validatePlayerSelection.addEventListener('click', () => {
+    handleForm();
   });
 
+  // To know player's shapes
+  const getShapePlayer1 = () => {
+    return (_player1.getShape());
+  }
+  const getShapePlayer2 = () => {
+    return (_player2.getShape());
+  }
+
+  // To know player's names
+  const getNamePlayer1 = () => {
+    return (_player1.getName());
+  }
+  const getNamePlayer2 = () => {
+    return (_player2.getName());
+  }
+
+  // To know which turn it is
   const aQuiLeTour = () => {
     return (_prochainJoueur);
   }
 
+  // To know if player2 is an AI or human
   const isCPU = () => {
     return (_player2.getType());
   }
 
+  // Next turn routine :
+  // Change the value of _prochainJoueur and display which turn it is.
   const _prochainTour = () => {
     if (_prochainJoueur == 'player1') {
       _prochainJoueur = 'player2';
-      divResult.textContent = `Au tour de ${_player2.getName()}`
+      divResult.textContent = `Au tour de ${_player2.getName()}`;
     }
     else {
       _prochainJoueur = 'player1';
-      divResult.textContent = `Au tour de ${_player1.getName()}`
+      divResult.textContent = `Au tour de ${_player1.getName()}`;
     }
   }
 
+  // Handle the restart button
   restart.addEventListener('click', () => {
     Game.clear();
   })
 
+  // Show or Hide the restart button
   const showRestart = () => {
     restart.style.display = "block";
   }
-
   const hideRestart = () => {
     restart.style.display = "none";
   }
 
-  const _win = (player) => {
-    divResult.textContent = `${player} a gagné !`;
+  // Handle the winning board :
+  // Display who win and the restart button + stop turn (_gameEnd = 1)
+  const win = (player) => {
+    let str = `${player} a gagné !`
+    divResult.textContent = str;
     showRestart();
     _gameEnd = 1;
   }
 
-  const _tie = () => {
+  // Handle the tie board :
+  // Display tie message and the restart button + stop turn (_gameEnd = 1)
+  const tie = () => {
     divResult.textContent = `Match nul !`;
     showRestart();
     _gameEnd = 1;
   }
 
+  // Handle the restart of the game by :
+  // - allowing player to take turns (_gameEnd = 0)
+  // - setting _prochainJoueur to the player with X sign
+  // - display which turn it is
   const clearResult = () => {
     _gameEnd = 0;
-    _prochainJoueur = 'player1';
-    divResult.textContent = `Au tour de ${_player1.getName()}`
-  }
-
-  const tourPlayer1 = (zone) => {
-    let notFilled = Game.markZone(zone, _player1.getShape());
-    let win;
-    if (notFilled && !_gameEnd) {
-      Game.render();
-      _prochainTour();
-      win = Game.endGame(_player1.getShape());
-      if (win == 1) { _win(_player1.getName()); }
-      else if (win == 2) { _tie(); }
-    }
-    if (notFilled && _player2.getType() == 'CPU' && !_gameEnd) {
-      _smartCPUMove();
-      Game.render();
-      _prochainTour();
-      win = Game.endGame(_player2.getShape());
-      if (win == 1) { _win(_player2.getName()); }
-      else if (win == 2) { _tie(); }
-    }
-  }
-
-  const tourPlayer2 = (zone) => {
-    if (_player2.getType() == 'CPU') {
-      _smartCPUMove();
-      Game.render();
-      _prochainTour();
+    if (_player1.getShape() == "X") {
+      _prochainJoueur = 'player1';
+      divResult.textContent = `Au tour de ${_player1.getName()}`;
     }
     else {
-      let notFilled = Game.markZone(zone, _player2.getShape());
-      let win;
-      if (notFilled && !_gameEnd) {
-        Game.render();
-        _prochainTour();
-        win = Game.endGame(_player2.getShape());
-        if (win == 1) { _win(_player2.getName()); }
-        else if (win == 2) { _tie(); }
+      _prochainJoueur = 'player2';
+      divResult.textContent = `Au tour de ${_player2.getName()}`;
+    }
+  }
+
+  const handleTurn = (zone) => {
+    let player = aQuiLeTour();
+    let notFilled = 0;
+
+    if (!_gameEnd) {
+      if(player == 'player1'){
+        notFilled = Game.markZone(zone, _player1.getShape());
+        if (notFilled) {
+          _prochainTour();
+          Game.render();
+          Game.endGame();
+        }
+        if(_player2.getType() == 'CPU' && !_gameEnd) {
+          _smartCPUMove();
+          _prochainTour();
+          Game.render();
+          Game.endGame();
+        }
+      }
+      else{
+        if(_player2.getType() == 'CPU') {
+          _smartCPUMove();
+          _prochainTour();
+          Game.render();
+          Game.endGame();
+        }
+        else{
+          notFilled = Game.markZone(zone, _player2.getShape());
+          if (notFilled) {
+            _prochainTour();
+            Game.render();
+            Game.endGame();
+          }
+        }
       }
     }
   }
@@ -207,7 +260,7 @@ const Partie = (() => {
     }
   }
 
-  return { tourPlayer1, tourPlayer2, aQuiLeTour, showRestart, hideRestart, clearResult, isCPU }
+  return { handleTurn, aQuiLeTour, showRestart, hideRestart, clearResult, isCPU, getShapePlayer1, getShapePlayer2, getNamePlayer1, getNamePlayer2, win, tie }
 })();
 
 //////////////////////
@@ -236,16 +289,8 @@ const Game = (() => {
         zone.id = i * 3 + j;
         zone.classList.add("zone");
         zone.addEventListener('click', function (e) {
-          if (Partie.aQuiLeTour() === 'player1') {
-            Partie.tourPlayer1(this.id);
-          }
-          else if (Partie.isCPU() == "Human") {
-            Partie.tourPlayer2(this.id);
-          }
+          Partie.handleTurn(this.id);
         })
-        if (Partie.isCPU() == "CPU") {
-          Partie.tourPlayer2(0);
-        }
         _col.appendChild(zone);
       }
       _wrapper.appendChild(_col);
@@ -291,9 +336,9 @@ const Game = (() => {
     //Verif diagonale 1
     if (_board[1][1] !== undefined) {
       let tmp = (_board[0][0] === _board[1][1]) + (_board[2][2] === _board[1][1]);
-      if (tmp == 2) { return (1); }
+      if (_board[1][1] == shape && tmp == 2) { return (1); }
       tmp = (_board[0][2] === _board[1][1]) + (_board[2][0] === _board[1][1]);
-      if (tmp == 2) { return (1); }
+      if (_board[1][1] == shape && tmp == 2) { return (1); }
     }
     else {
       return (0);
@@ -311,18 +356,23 @@ const Game = (() => {
     return (1);
   }
 
-  const endGame = (shape) => {
-    let win = verifVictoire(shape);
+  const endGame = () => {
+    let win = verifVictoire(Partie.getShapePlayer1());
     if (win) {
-      return (1);
+      Partie.win(Partie.getNamePlayer1());
     }
     else {
-      let tie = _verifTie();
-      if (tie) {
-        return (2);
+      win = verifVictoire(Partie.getShapePlayer2());
+      if (win) {
+        Partie.win(Partie.getNamePlayer2());
+      }
+      else {
+        let tie = _verifTie();
+        if (tie) {
+          Partie.tie();
+        }
       }
     }
-    return (0);
   }
 
   return { render, getZone, markZone, clear, endGame, verifVictoire, unMarkZone };
