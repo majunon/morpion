@@ -8,31 +8,37 @@ Array.prototype.trueEvery = function (pred) {
 }
 
 // The players
-const Player = (name, shape) => {
+const Player = (name, shape, type) => {
   let _playerName = name;
   let _playerShape = shape;
+  let _playerType = type;
 
   const getName = () => _playerName;
   const getShape = () => _playerShape;
+  const getType = () => _playerType;
   const setName = (nouveauNom) => {
     _playerName = nouveauNom;
   }
   const setShape = (nouveauSign) => {
     _playerShape = nouveauSign;
   }
-  return ({ getName, getShape, setName, setShape });
+  const setType = (nouveauType) => {
+    _playerType = nouveauType;
+  }
+  return ({ getName, getShape, setName, setShape, getType, setType });
 };
 
 // The game
 const Partie = (() => {
-  const _player1 = Player('', '');
-  const _player2 = Player('', '');
+  const _player1 = Player('', '', 'Human');
+  const _player2 = Player('', '', '');
   let _gameEnd = 0;
   let _prochainJoueur = 'player1';
 
   const restart = document.querySelector('#restart');
   const divResult = document.querySelector('.result');
 
+  const typePlayer2 = document.querySelector('#player2Human');
   const signPlayer1 = document.querySelector('#player1X');
   const form = document.querySelector('.playerSelection');
   const board = document.querySelector('#wrapper');
@@ -52,8 +58,15 @@ const Partie = (() => {
       _player2.setShape('X');
       _prochainJoueur = 'player2';
     }
+    if(typePlayer2.checked){
+      _player2.setType('Human');
+    }
+    else{
+      _player2.setType('CPU');
+    }
     form.style.display = "none";
     board.style.display = "block";
+    divResult.textContent = `Au tour de ${_player1.getName()}`
   });
 
   const aQuiLeTour = () => {
@@ -63,9 +76,11 @@ const Partie = (() => {
   const _prochainTour = () => {
     if (_prochainJoueur == 'player1') {
       _prochainJoueur = 'player2';
+      divResult.textContent = `Au tour de ${_player2.getName()}`
     }
     else {
       _prochainJoueur = 'player1';
+      divResult.textContent = `Au tour de ${_player1.getName()}`
     }
   }
 
@@ -94,8 +109,9 @@ const Partie = (() => {
   }
 
   const clearResult = () => {
-    divResult.textContent = "";
     _gameEnd=0;
+    _prochainJoueur = 'player1';
+    divResult.textContent = `Au tour de ${_player1.getName()}`
   }
 
   const tourPlayer1 = (zone) => {
