@@ -152,12 +152,7 @@ const Partie = (() => {
     let str = `${player} a gagné !`
     divResult.textContent = str;
     showRestart();
-<<<<<<< HEAD
     _gameEnd = 1;
-=======
-    _gameEnd=1;
-    _prochainJoueur='player1';
->>>>>>> 84ae29b929202b11a9742f26c334fc1d25d768f1
   }
 
   // Handle the tie board :
@@ -165,12 +160,7 @@ const Partie = (() => {
   const tie = () => {
     divResult.textContent = `Match nul !`;
     showRestart();
-<<<<<<< HEAD
     _gameEnd = 1;
-=======
-    _gameEnd=1;
-    _prochainJoueur='player1';
->>>>>>> 84ae29b929202b11a9742f26c334fc1d25d768f1
   }
 
   // Handle the restart of the game by :
