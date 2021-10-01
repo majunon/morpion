@@ -66,11 +66,15 @@ const Partie = (() => {
       _player1.setShape('X');
       _player2.setShape('O');
       _prochainJoueur = 'player1';
+      // Display a message to tell which player needs to play.
+      divResult.textContent = `Au tour de ${_player1.getName()}`;
     }
     else {
       _player1.setShape('O');
       _player2.setShape('X');
       _prochainJoueur = 'player2';
+      // Display a message to tell which player needs to play.
+      divResult.textContent = `Au tour de ${_player2.getName()}`;
     }
     // Set the type for player2
     if (typePlayer2.checked) {
@@ -85,8 +89,6 @@ const Partie = (() => {
     // Make the form disapear and display the board instead.
     form.style.display = "none";
     board.style.display = "block";
-    // Display a message to tell which player needs to play.
-    divResult.textContent = `Au tour de ${_prochainJoueur}`;
   }
 
   // When the validate button is clicked, handle the form data
